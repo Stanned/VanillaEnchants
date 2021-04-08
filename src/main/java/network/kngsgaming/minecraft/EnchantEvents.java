@@ -18,6 +18,7 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class EnchantEvents implements Listener {
     private final VanillaEnchants plugin;
@@ -70,11 +71,12 @@ public class EnchantEvents implements Listener {
                 //get enchantment map for left item
                 if (leftIsBook) {
                     resultingEnchantments = new HashMap<Enchantment, Integer>(((EnchantmentStorageMeta) leftItem.getItemMeta()).getStoredEnchants());
-                    for (Map.Entry<Enchantment, Integer> entry : resultingEnchantments.entrySet()) {
-                        if (!(entry.getKey().canEnchantItem(rightItem))) {
-                            valid = false;
-                        }
-                    }
+//                    resultingEnchantments = resultingEnchantments.entrySet().stream().filter(entry -> entry.getKey().canEnchantItem(rightItem)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+//                    for (Map.Entry<Enchantment, Integer> entry : resultingEnchantments.entrySet()) {
+//                        if (!(entry.getKey().canEnchantItem(rightItem))) {
+//                            resultingEnchantments.remove(entry.getKey());
+//                        }
+//                    }
                 } else {
                     resultingEnchantments = new HashMap(leftItem.getItemMeta().getEnchants());
                 }
@@ -82,11 +84,12 @@ public class EnchantEvents implements Listener {
                 //get enchantment map for right item
                 if (rightIsBook) {
                     addedEnchantments = new HashMap<Enchantment, Integer>(((EnchantmentStorageMeta) rightItem.getItemMeta()).getStoredEnchants());
-                    for (Map.Entry<Enchantment, Integer> entry : addedEnchantments.entrySet()) {
-                        if (!(entry.getKey().canEnchantItem(leftItem))) {
-                            valid = false;
-                        }
-                    }
+                    addedEnchantments = addedEnchantments.entrySet().stream().filter(entry -> entry.getKey().canEnchantItem(leftItem)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+//                    for (Map.Entry<Enchantment, Integer> entry : addedEnchantments.entrySet()) {
+//                        if (!(entry.getKey().canEnchantItem(leftItem))) {
+//                            addedEnchantments.remove(entry.getKey());
+//                        }
+//                    }
                 } else {
                     addedEnchantments = rightItem.getItemMeta().getEnchants();
                 }
@@ -163,11 +166,7 @@ public class EnchantEvents implements Listener {
                     }
                     inventory.setRepairCost(repairCost);
                 }
-                if (valid) {
-                    event.setResult(resultItem);
-                } else {
-                    event.setResult(new ItemStack(Material.AIR));
-                }
+                event.setResult(resultItem);
 
 
                 int finalRepairCost = inventory.getRepairCost();
