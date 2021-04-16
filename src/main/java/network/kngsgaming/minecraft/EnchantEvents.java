@@ -61,7 +61,6 @@ public class EnchantEvents implements Listener {
             //check to see if there is a book
             boolean leftIsBook = leftItem.getItemMeta() instanceof EnchantmentStorageMeta;
             boolean rightIsBook = rightItem.getItemMeta() instanceof EnchantmentStorageMeta;
-            boolean valid = true;
             //if the items are the same type OR one of the items is a book
             if (leftItem.getType() == rightItem.getType() || leftIsBook || rightIsBook) {
                 //use the enchants on the left item as a base
@@ -93,6 +92,11 @@ public class EnchantEvents implements Listener {
                 } else {
                     addedEnchantments = rightItem.getItemMeta().getEnchants();
                 }
+
+                if (leftIsBook && rightIsBook) {
+                    return;
+                }
+
 
                 //iterate over all enchants on the right item
                 for (Map.Entry<Enchantment, Integer> entry : addedEnchantments.entrySet()) {
